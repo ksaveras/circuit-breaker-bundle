@@ -7,24 +7,39 @@ namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * Class Configuration.
- */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder('ksaveras_circuit_breaker');
 
         $treeBuilder->getRootNode()
+            ->fixXmlConfig('circuit_breaker')
             ->children()
-                ->arrayNode('twitter')
-                    ->children()
-                        ->integerNode('client_id')->end()
-                        ->scalarNode('client_secret')->end()
+                ->arrayNode('circuit_breakers')
+                    ->useAttributeAsKey('name')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('storage')
+                                ->isRequired()
+                                ->cannotBeEmpty()
+                            ->end()
+                            ->integerNode('reset_period')
+                                ->defaultValue(60)
+                                ->min(0)
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('storage')
+                    ->useAttributeAsKey('name')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('service')
+                                ->isRequired()
+                                ->cannotBeEmpty()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()
