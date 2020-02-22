@@ -39,7 +39,7 @@
     "scripts": {
         "phpcsfix": "@php ./vendor/bin/php-cs-fixer fix",
         "phpcscheck": "@php ./vendor/bin/php-cs-fixer fix --dry-run --diff --diff-format=udiff",
-        "phpstan": "@php ./vendor/bin/phpstan analyse src tests",
+        "phpstan": "@php ./vendor/bin/phpstan analyse",
         "test": "@php ./vendor/bin/phpunit"
     },
     "config": {

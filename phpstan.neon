@@ -1,6 +1,17 @@
 parameters:
-    level: 7
+    level: max
     checkMissingIterableValueType: false
+    paths:
+        - DependencyInjection
+        - Tests
+
+    ignoreErrors:
+        -
+            message: '#::loadInternal\(\) has no return typehint specified#'
+            path: 'DependencyInjection/CircuitBreakerExtension.php'
+        -
+            message: '#::fixXmlConfig\(\)#'
+            path: 'DependencyInjection/Configuration.php'
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
