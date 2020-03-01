@@ -11,9 +11,9 @@
 namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
 class CircuitBreakerExtension extends ConfigurableExtension
 {
