@@ -54,6 +54,7 @@ class ConfigurationTest extends TestCase
                     'web_api' => [
                         'storage' => 'storage_service',
                         'reset_period' => 60,
+                        'failure_threshold' => 5,
                     ],
                 ],
                 'storage' => [],
@@ -67,6 +68,7 @@ class ConfigurationTest extends TestCase
                         'web_api' => [
                             'storage' => 'storage_service',
                             'reset_period' => 300,
+                            'failure_threshold' => 10,
                         ],
                     ],
                 ],
@@ -76,6 +78,7 @@ class ConfigurationTest extends TestCase
                     'web_api' => [
                         'storage' => 'storage_service',
                         'reset_period' => 300,
+                        'failure_threshold' => 10,
                     ],
                 ],
                 'storage' => [],

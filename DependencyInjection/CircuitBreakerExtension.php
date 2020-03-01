@@ -13,6 +13,7 @@ namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 
 class CircuitBreakerExtension extends ConfigurableExtension
 {
@@ -29,9 +30,11 @@ class CircuitBreakerExtension extends ConfigurableExtension
                 $serviceConfig['reset_period'],
             ];
 
-            $container->register($id, 'Ksaveras\CircuitBreaker\CircuitBreaker')
+            $definition = $container->register($id, 'Ksaveras\CircuitBreaker\CircuitBreaker')
                 ->setPublic(false)
                 ->setArguments($arguments);
+            $definition->addMethodCall('setEventDispatcher', [ref('event_dispatcher')]);
+            $definition->addMethodCall('setFailureThreshold', [$serviceConfig['failure_threshold']]);
         }
     }
 }
