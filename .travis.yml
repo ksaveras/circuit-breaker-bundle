@@ -1,0 +1,42 @@
+language: php
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/symfony-bridge/.phpunit
+
+env:
+  global:
+    - PHPUNIT_FLAGS="-v"
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.3
+      env: SYMFONY_VERSION=4.3.*
+    - php: 7.3
+      env: SYMFONY_VERSION=4.4.*
+    - php: 7.3
+      env: SYMFONY_VERSION=5.0.*
+    - php: 7.4
+      env: SYMFONY_VERSION=4.3.*
+    - php: 7.4
+      env: SYMFONY_VERSION=4.4.*
+    - php: 7.4
+      env: SYMFONY_VERSION=5.0.*
+
+notifications:
+  email:
+    on_success: never
+
+before_install:
+  - phpenv config-rm xdebug.ini || true
+  - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --no-update; fi;
+
+install:
+  - composer update -n
+
+script:
+  - composer test
+  - composer phpstan
+  - composer phpcscheck
