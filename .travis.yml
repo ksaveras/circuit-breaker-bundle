@@ -1,5 +1,5 @@
 language: php
-
+sudo: false
 cache:
   directories:
     - $HOME/.composer/cache
@@ -8,6 +8,8 @@ cache:
 env:
   global:
     - PHPUNIT_FLAGS="-v"
+    - SYMFONY_PHPUNIT_VERSION=8.5
+    - SYMFONY_PHPUNIT_DIR="$HOME/symfony-bridge/.phpunit"
 
 matrix:
   fast_finish: true
@@ -23,28 +25,32 @@ matrix:
     - php: 7.4
       env: SYMFONY_VERSION=4.4.*
     - php: 7.4
-      env: SYMFONY_VERSION=5.0.*
+      env: SYMFONY_VERSION=5.0.* COVERAGE=true PHPUNIT_FLAGS="-v --coverage-clover=clover.xml"
 
 notifications:
   email:
     on_success: never
 
 before_install:
-#  - phpenv config-rm xdebug.ini || true
+  - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
   - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --no-update; fi;
 
 install:
-  - composer update -n
+  - composer update --prefer-dist --no-interaction
 
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+  - |
+    if [[ $COVERAGE ]]; then
+      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      chmod +x ./cc-test-reporter
+      ./cc-test-reporter before-build
+    fi
 
 script:
+  - composer validate --strict --no-check-lock
   - composer phpcscheck
   - composer phpstan
-  - composer test -- --coverage-clover=clover.xml
+  - if [[ $COVERAGE != true ]]; then ./vendor/bin/simple-phpunit $PHPUNIT_FLAGS; fi;
 
 after_script:
-  - ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT
+  - if [[ $COVERAGE != true ]]; then ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT; fi;
