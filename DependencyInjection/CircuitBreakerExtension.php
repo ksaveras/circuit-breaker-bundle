@@ -14,7 +14,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class CircuitBreakerExtension extends ConfigurableExtension
+final class CircuitBreakerExtension extends ConfigurableExtension
 {
     public function loadInternal(array $config, ContainerBuilder $container)
     {
