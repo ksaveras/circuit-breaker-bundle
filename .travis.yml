@@ -30,13 +30,21 @@ notifications:
     on_success: never
 
 before_install:
-  - phpenv config-rm xdebug.ini || true
+#  - phpenv config-rm xdebug.ini || true
   - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --no-update; fi;
 
 install:
   - composer update -n
 
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
 script:
-  - composer test
-  - composer phpstan
   - composer phpcscheck
+  - composer phpstan
+  - composer test -- --coverage-clover=clover.xml
+
+after_script:
+  - ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT
