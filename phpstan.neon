@@ -6,13 +6,12 @@ parameters:
         - Tests
     autoload_files:
         - vendor/symfony/symfony/src/Symfony/Component/DependencyInjection/Loader/Configurator/ContainerConfigurator.php
+    excludes_analyse:
+        - DependencyInjection/Configuration.php
     ignoreErrors:
         -
             message: '#::loadInternal\(\) has no return typehint specified#'
             path: 'DependencyInjection/CircuitBreakerExtension.php'
-        -
-            message: '#::fixXmlConfig\(\)#'
-            path: 'DependencyInjection/Configuration.php'
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
