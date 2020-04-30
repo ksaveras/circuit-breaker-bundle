@@ -1,5 +1,6 @@
 # Circuit Breaker Symfony Bundle
 ![Travis (.org) branch](https://img.shields.io/travis/ksaveras/circuit-breaker-bundle/master)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/ksaveras/circuit-breaker-bundle)
 ![GitHub](https://img.shields.io/github/license/ksaveras/circuit-breaker-bundle)
 
 Installation
