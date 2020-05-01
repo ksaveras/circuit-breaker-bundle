@@ -7,7 +7,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -22,7 +21,6 @@ final class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->getRootNode();
 
         $this->addCircuitBreakerSection($rootNode);
-        $this->addStorageSection($rootNode);
 
         return $treeBuilder;
     }
@@ -37,7 +35,7 @@ final class Configuration implements ConfigurationInterface
                     ->arrayPrototype()
                     ->children()
                         ->scalarNode('storage')
-                            ->info('Circuit Breaker Storage service name')
+                            ->info('Circuit Breaker Storage DI service')
                             ->isRequired()
                             ->cannotBeEmpty()
                         ->end()
@@ -50,22 +48,6 @@ final class Configuration implements ConfigurationInterface
                             ->info('Number of failures before opening the circuit')
                             ->defaultValue(5)
                             ->min(0)
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-        ;
-    }
-
-    private function addStorageSection(ArrayNodeDefinition $rootNode): void
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('storage')
-                    ->useAttributeAsKey('name')
-                    ->arrayPrototype()
-                        ->children()
-                            ->scalarNode('service')->isRequired()->cannotBeEmpty()->end()
                         ->end()
                     ->end()
                 ->end()

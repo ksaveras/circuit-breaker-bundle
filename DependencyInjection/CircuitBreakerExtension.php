@@ -9,31 +9,44 @@
  */
 namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 
+use Ksaveras\CircuitBreaker\CircuitBreaker;
+use Ksaveras\CircuitBreaker\Storage\StorageInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\ref;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 final class CircuitBreakerExtension extends ConfigurableExtension
 {
-    public function loadInternal(array $config, ContainerBuilder $container)
+    protected function loadInternal(array $config, ContainerBuilder $container)
     {
-        foreach ($config['circuit_breakers'] as $name => $serviceConfig) {
-            $id = sprintf('%s.%s', $this->getAlias(), $name);
+        $eventDispatcherRef = $container->has('event_dispatcher') ? new Reference('event_dispatcher') : null;
 
-            $storageService = new Reference($serviceConfig['storage']);
+        foreach ($config['circuit_breakers'] as $name => $serviceConfig) {
+            $id = sprintf('ksaveras.%s.%s', $this->getAlias(), $name);
+
+            $storageReference = new Reference($serviceConfig['storage']);
+            $storageDefinition = $container->getDefinition($serviceConfig['storage']);
+
+            $implements = class_implements((string) $storageDefinition->getClass());
+            if (!\array_key_exists(StorageInterface::class, $implements)) {
+                throw new InvalidConfigurationException(sprintf('Invalid "%s" storage service. Service must implement "%s" interface.', $serviceConfig['storage'], StorageInterface::class));
+            }
 
             $arguments = [
                 $name,
-                $storageService,
+                $storageReference,
                 $serviceConfig['reset_period'],
             ];
 
-            $definition = $container->register($id, 'Ksaveras\CircuitBreaker\CircuitBreaker')
+            $definition = $container->register($id, CircuitBreaker::class)
                 ->setPublic(false)
                 ->setArguments($arguments);
-            $definition->addMethodCall('setEventDispatcher', [ref('event_dispatcher')]);
             $definition->addMethodCall('setFailureThreshold', [$serviceConfig['failure_threshold']]);
+
+            if (null !== $eventDispatcherRef) {
+                $definition->addMethodCall('setEventDispatcher', [$eventDispatcherRef]);
+            }
         }
     }
 }

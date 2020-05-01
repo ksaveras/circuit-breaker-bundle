@@ -34,7 +34,6 @@ class ConfigurationTest extends TestCase
             [],
             [
                 'circuit_breakers' => [],
-                'storage' => [],
             ],
         ];
 
@@ -56,7 +55,6 @@ class ConfigurationTest extends TestCase
                         'failure_threshold' => 5,
                     ],
                 ],
-                'storage' => [],
             ],
         ];
 
@@ -78,27 +76,6 @@ class ConfigurationTest extends TestCase
                         'storage' => 'storage_service',
                         'reset_period' => 300,
                         'failure_threshold' => 10,
-                    ],
-                ],
-                'storage' => [],
-            ],
-        ];
-
-        yield [
-            [
-                'ksaveras_circuit_breaker' => [
-                    'storage' => [
-                        'apcu' => [
-                            'service' => 'storage_service',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'circuit_breakers' => [],
-                'storage' => [
-                    'apcu' => [
-                        'service' => 'storage_service',
                     ],
                 ],
             ],
