@@ -44,3 +44,20 @@ return [
     Ksaveras\CircuitBreakerBundle\KsaverasCircuitBreakerBundle::class => ['all' => true],
 ];
 ```
+
+## Configuration
+``` yml
+# config/services.yaml
+services:
+    circuit_breaker_storage_apcu:
+        class: Ksaveras\CircuitBreaker\Storage\Apcu
+```
+``` yml
+# config/packages/circuit_breaker.yaml
+ksaveras_circuit_breaker:
+    circuit_breaker:
+        integration_name:
+            storage: 'circuit_breaker_storage_apcu'
+            reset_period: 600
+            failure_threshold: 3
+```
