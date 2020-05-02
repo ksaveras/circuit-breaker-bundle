@@ -50,7 +50,7 @@ script:
   - composer validate --strict --no-check-lock
   - composer phpcscheck
   - composer phpstan
-  - if [[ $COVERAGE != true ]]; then ./vendor/bin/simple-phpunit $PHPUNIT_FLAGS; fi;
+  - ./vendor/bin/simple-phpunit $PHPUNIT_FLAGS
 
 after_script:
-  - if [[ $COVERAGE != true ]]; then ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT; fi;
+  - if [[ $COVERAGE ]]; then ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT; fi;
