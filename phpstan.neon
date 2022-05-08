@@ -4,9 +4,7 @@ parameters:
     paths:
         - DependencyInjection
         - Tests
-    autoload_files:
-        - vendor/symfony/symfony/src/Symfony/Component/DependencyInjection/Loader/Configurator/ContainerConfigurator.php
-    excludes_analyse:
+    excludePaths:
         - DependencyInjection/Configuration.php
     ignoreErrors:
         -

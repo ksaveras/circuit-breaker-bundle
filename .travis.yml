@@ -8,24 +8,20 @@ cache:
 env:
   global:
     - PHPUNIT_FLAGS="-v"
-    - SYMFONY_PHPUNIT_VERSION=8.5
+    - SYMFONY_PHPUNIT_VERSION=9.5
     - SYMFONY_PHPUNIT_DIR="$HOME/symfony-bridge/.phpunit"
 
 matrix:
   fast_finish: true
   include:
-    - php: 7.3
+    - php: 7.4
       env: SYMFONY_VERSION=4.3.*
-    - php: 7.3
+    - php: 7.4
       env: SYMFONY_VERSION=4.4.*
-    - php: 7.3
+    - php: 7.4
       env: SYMFONY_VERSION=5.0.*
     - php: 7.4
-      env: SYMFONY_VERSION=4.3.*
-    - php: 7.4
-      env: SYMFONY_VERSION=4.4.*
-    - php: 7.4
-      env: SYMFONY_VERSION=5.0.* COVERAGE=true PHPUNIT_FLAGS="-v --coverage-clover=clover.xml"
+      env: SYMFONY_VERSION=5.1.* XDEBUG_MODE=coverage COVERAGE=true PHPUNIT_FLAGS="-v --coverage-clover=clover.xml"
 
 notifications:
   email:

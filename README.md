@@ -47,17 +47,22 @@ return [
 
 ## Configuration
 ``` yml
-# config/services.yaml
-services:
-    circuit_breaker_storage_apcu:
-        class: Ksaveras\CircuitBreaker\Storage\Apcu
-```
-``` yml
 # config/packages/circuit_breaker.yaml
 ksaveras_circuit_breaker:
-    circuit_breaker:
-        integration_name:
-            storage: 'circuit_breaker_storage_apcu'
-            reset_period: 600
+    circuit_breakers:
+        cb_name:
+            storage: 'apcu'
             failure_threshold: 3
+            retry_policy: 
+                type: 'exponential'
+                options:
+                    reset_timeout: 60
+
+    storage:
+        apcu: ~
+        in_memory: ~
+        redis: 'client_service_id'
+        psr_cache: 'pool_service_id'
+        predis: 'predis_service_id'
+        my_storage: 'storage_service'
 ```

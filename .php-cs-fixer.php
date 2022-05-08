@@ -8,7 +8,15 @@ For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 EOF;
 
-return PhpCsFixer\Config::create()
+$finder = PhpCsFixer\Finder::create()
+    ->in([__DIR__.'/'])
+    ->name('*.php')
+    ->notName('Configuration.php')
+;
+
+$config = new PhpCsFixer\Config();
+
+return $config
     ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,
@@ -28,16 +36,11 @@ return PhpCsFixer\Config::create()
         'declare_strict_types' => true,
         'fopen_flags' => true,
         'header_comment' => ['header' => $header, 'separate' => 'none'],
+        'linebreak_after_opening_tag' => false,
         'method_chaining_indentation' => true,
         'no_useless_else' => true,
         'no_superfluous_phpdoc_tags' => ['allow_mixed' => true],
         'ordered_imports' => true,
         'php_unit_mock' => true,
     ])
-    ->setFinder(
-        PhpCsFixer\Finder::create()
-            ->files()
-            ->in([__DIR__.'/'])
-            ->name('*.php')
-            ->notName('Configuration.php')
-    );
+    ->setFinder($finder);
