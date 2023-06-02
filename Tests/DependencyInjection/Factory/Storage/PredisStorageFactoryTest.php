@@ -28,7 +28,7 @@ final class PredisStorageFactoryTest extends TestCase
         $container
             ->expects(self::once())
             ->method('setDefinition')
-            ->with($expectedId, self::callback(function ($definition) {
+            ->with($expectedId, self::callback(static function ($definition): bool {
                 self::assertInstanceOf(ChildDefinition::class, $definition);
                 self::assertEquals('ksaveras_circuit_breaker.storage.predis.abstract', $definition->getParent());
                 self::assertEquals(new Reference('predis_service_id'), $definition->getArgument(0));

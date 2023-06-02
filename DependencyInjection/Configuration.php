@@ -45,27 +45,15 @@ final class Configuration implements ConfigurationInterface
                                     continue;
                                 }
                                 if (\is_string($v)) {
-                                    if (0 === strpos($v, '@')) {
+                                    if (str_starts_with($v, '@')) {
                                         $config[$name] = ['type' => 'service', 'id' => substr($v, 1)];
                                     } else {
-                                        switch ($name) {
-                                          case 'apcu':
-                                          case 'in_memory':
-                                              $config[$name] = ['type' => $v];
-
-                                              break;
-                                          case 'redis':
-                                          case 'predis':
-                                              $config[$name] = ['type' => $name, 'client' => $v];
-
-                                              break;
-                                          case 'psr_cache':
-                                              $config[$name] = ['type' => $name, 'pool' => $v];
-
-                                              break;
-                                          default:
-                                              $config[$name] = ['type' => 'service', 'id' => $v];
-                                        }
+                                        $config[$name] = match ($name) {
+                                            'apcu', 'in_memory' => ['type' => $v],
+                                            'redis', 'predis' => ['type' => $name, 'client' => $v],
+                                            'psr_cache' => ['type' => $name, 'pool' => $v],
+                                            default => ['type' => 'service', 'id' => $v],
+                                        };
                                     }
                                 }
                             }
@@ -75,19 +63,19 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                     ->arrayPrototype()
                         ->validate()
-                            ->ifTrue(function ($v) { return 'service' === $v['type'] && !isset($v['id']); })
+                            ->ifTrue(static fn($v): bool => 'service' === $v['type'] && !isset($v['id']))
                             ->thenInvalid('You must specify service "id" for storage type "service".')
                         ->end()
                         ->validate()
-                            ->ifTrue(function ($v) { return 'redis' === $v['type'] && !isset($v['client']); })
+                            ->ifTrue(static fn($v): bool => 'redis' === $v['type'] && !isset($v['client']))
                             ->thenInvalid('You must specify "client" for storage type "redis".')
                         ->end()
                         ->validate()
-                            ->ifTrue(function ($v) { return 'predis' === $v['type'] && !isset($v['client']); })
+                            ->ifTrue(static fn($v): bool => 'predis' === $v['type'] && !isset($v['client']))
                             ->thenInvalid('You must specify "client" for storage type "predis".')
                         ->end()
                         ->validate()
-                            ->ifTrue(function ($v) { return 'psr_cache' === $v['type'] && !isset($v['pool']); })
+                            ->ifTrue(static fn($v): bool => 'psr_cache' === $v['type'] && !isset($v['pool']))
                             ->thenInvalid('You must specify "pool" for storage type "psr_cache".')
                         ->end()
                         ->children()
