@@ -1,96 +1,60 @@
-name: "Continuous Integration"
+name: Continuous Integration
 
 on:
   pull_request:
     branches:
-      - "master"
-      - "main"
-
-  push:
-    branches:
-      - "master"
-      - "main"
-      - "*.x"
+      - main
 
 jobs:
   phpunit:
-    name: "PHPUnit"
-    runs-on: "ubuntu-latest"
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    env:
+      SYMFONY_REQUIRE: ${{matrix.symfony-require}}
+      SYMFONY_DEPRECATIONS_HELPER: weak
 
     strategy:
       fail-fast: false
       matrix:
         php-version:
-          - "7.4"
-          - "8.0"
-          - "8.1"
+          - 8.1
+          - 8.2
         dependencies:
-          - "highest"
+          - highest
         stability:
-          - "stable"
+          - stable
+        symfony-require:
+          - ""
+        include:
+          # Tests the lowest set of dependencies
+          - dependencies: lowest
+            stability: stable
+            php-version: 8.1
+            symfony-require: 5.4.*
 
     steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v2"
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 2
 
-      - name: "Install PHP with PCOV"
-        uses: "shivammathur/setup-php@v2"
+      - name: Install PHP with PCOV
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: "${{ matrix.php-version }}"
-          coverage: "pcov"
-          ini-values: "zend.assertions=1, apc.enable_cli=1"
-          extensions: "redis,apcu"
-          tools: "composer:v2,flex"
+          php-version: ${{ matrix.php-version }}
+          ini-values: date.timezone=UTC,memory_limit=-1,default_socket_timeout=10,session.gc_probability=0,apc.enable_cli=1,zend.assertions=1
+          extensions: redis,apcu
+          tools: composer:v2,flex
 
-      - name: "Enforce using stable dependencies"
-        run: "composer config minimum-stability stable"
-        if: "${{ matrix.stability == 'stable' }}"
+      - name: Enforce using stable dependencies
+        run: composer config minimum-stability stable
+        if: ${{ matrix.stability == 'stable' }}
 
-      - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v2"
+      - name: Install dependencies with Composer
+        uses: ramsey/composer-install@v2
         with:
-          dependency-versions: "${{ matrix.dependencies }}"
-          composer-options: "--prefer-dist --optimize-autoloader"
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: --prefer-dist --optimize-autoloader
 
-      - name: "Run PHPUnit"
-        run: "./vendor/bin/phpunit"
-
-#      - name: "Upload coverage file"
-#        uses: "actions/upload-artifact@v2"
-#        with:
-#          name: "phpunit-${{ matrix.php-version }}-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}.coverage"
-#          path: "clover.xml"
-
-#  upload_coverage:
-#    name: "Upload coverage to Codecov"
-#    runs-on: "ubuntu-latest"
-#    needs:
-#      - "phpunit"
-#
-#    steps:
-#      - name: "Checkout"
-#        uses: "actions/checkout@v2"
-#        with:
-#          fetch-depth: 2
-#
-#      - name: "Download coverage files"
-#        uses: "actions/download-artifact@v2"
-#        with:
-#          path: "reports"
-#
-#      - name: "Upload to Codecov"
-#        uses: "codecov/codecov-action@v1"
-#        env:
-#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-#        with:
-#          directory: reports
-#
-#      - name: "Upload to CodeClimate"
-#        uses: "paambaati/codeclimate-action@v3.0.0"
-#        env:
-#          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-#        with:
-#          coverageLocations: |
-#            ${{github.workspace}}/reports/*/clover.xml:clover
+      - name: Run PHPUnit
+        run: composer test
