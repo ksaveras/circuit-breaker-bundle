@@ -20,6 +20,8 @@
       <directory>./.github/</directory>
       <directory>./Tests/</directory>
       <directory>./vendor/</directory>
+      <file>./php-cs-fixer.php</file>
+      <file>./rector.php</file>
     </exclude>
   </source>
 </phpunit>
