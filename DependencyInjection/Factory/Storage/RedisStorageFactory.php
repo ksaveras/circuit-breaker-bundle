@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RedisStorageFactory extends AbstractStorageFactory
+final class RedisStorageFactory extends AbstractStorageFactory
 {
     public function create(ContainerBuilder $container, string $name, array $config = []): string
     {

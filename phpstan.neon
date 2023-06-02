@@ -6,10 +6,6 @@ parameters:
         - Tests
     excludePaths:
         - DependencyInjection/Configuration.php
-    ignoreErrors:
-        -
-            message: '#::loadInternal\(\) has no return type specified\.#'
-            path: 'DependencyInjection/KsaverasCircuitBreakerExtension.php'
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon

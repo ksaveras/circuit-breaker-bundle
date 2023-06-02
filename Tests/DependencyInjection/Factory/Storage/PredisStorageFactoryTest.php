@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PredisStorageFactoryTest extends TestCase
+final class PredisStorageFactoryTest extends TestCase
 {
     public function testCreate(): void
     {

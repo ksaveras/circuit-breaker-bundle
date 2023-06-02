@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ApcuStorageFactoryTest extends TestCase
+final class ApcuStorageFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
