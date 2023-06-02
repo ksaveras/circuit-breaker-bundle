@@ -10,14 +10,17 @@
 use Rector\CodeQuality\Rector\Identical\FlipTypeControlToUseExclusiveTypeRector;
 use Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector;
 use Rector\CodingStyle\Rector\ClassMethod\NewlineBeforeNewAssignSetRector;
+use Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector;
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\TypeDeclaration\Rector\FunctionLike\AddReturnTypeDeclarationFromYieldsRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
-        __DIR__.'/src',
-        __DIR__.'/tests',
+        __DIR__.'/DependencyInjection',
+        __DIR__.'/Resources',
+        __DIR__.'/Tests',
     ]);
 
     // define sets of rules
@@ -33,7 +36,9 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->skip([
+        AddReturnTypeDeclarationFromYieldsRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
+        NewlineAfterStatementRector::class,
         NewlineBeforeNewAssignSetRector::class,
         VarConstantCommentRector::class,
     ]);
