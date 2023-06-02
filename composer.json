@@ -20,6 +20,7 @@
         "phpstan/phpstan": "^1.6",
         "phpstan/phpstan-phpunit": "^1.0",
         "phpunit/phpunit": "^9.5",
+        "rector/rector": "^0.17.0",
         "symfony/phpunit-bridge": "^4.0|^5.0|^6.0"
     },
     "autoload": {
@@ -31,10 +32,12 @@
         ]
     },
     "scripts": {
-        "phpcs": "@php ./vendor/bin/php-cs-fixer fix --dry-run --diff",
-        "phpcs:fix": "@php ./vendor/bin/php-cs-fixer fix",
-        "phpstan": "@php ./vendor/bin/phpstan analyse",
-        "test": "@php ./vendor/bin/phpunit",
+        "phpcs": "./vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "phpcs:fix": "./vendor/bin/php-cs-fixer fix",
+        "phpstan": "./vendor/bin/phpstan analyse",
+        "rector": "./vendor/bin/rector process --dry-run",
+        "rector:fix": "./vendor/bin/rector process",
+        "test": "./vendor/bin/phpunit",
         "test:coverage": "@php -dapc.enable_cli=1 ./vendor/bin/phpunit --coverage-clover=coverage/clover.xml"
     },
     "config": {
