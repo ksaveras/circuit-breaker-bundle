@@ -10,15 +10,14 @@
 namespace Ksaveras\CircuitBreakerBundle\Tests\DependencyInjection;
 
 use Ksaveras\CircuitBreakerBundle\DependencyInjection\Configuration;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 
 final class ConfigurationTest extends TestCase
 {
-    /**
-     * @dataProvider configsDataProvider
-     */
+    #[DataProvider('configsDataProvider')]
     public function testConfiguration(array $configs, array $expected): void
     {
         $configuration = new Configuration();
@@ -29,7 +28,7 @@ final class ConfigurationTest extends TestCase
         self::assertEquals($expected, $config);
     }
 
-    public function configsDataProvider(): iterable
+    public static function configsDataProvider(): iterable
     {
         yield [
             [
@@ -134,9 +133,7 @@ final class ConfigurationTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider storageTypeConfigProvider
-     */
+    #[DataProvider('storageTypeConfigProvider')]
     public function testStorageTypeConfiguration(array $config, array $expected): void
     {
         $configuration = new Configuration();
@@ -151,7 +148,7 @@ final class ConfigurationTest extends TestCase
         self::assertEquals($expected, $config['storage']);
     }
 
-    public function storageTypeConfigProvider(): iterable
+    public static function storageTypeConfigProvider(): iterable
     {
         yield [
             [],
