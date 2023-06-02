@@ -7,10 +7,11 @@ on:
 
 jobs:
   phpunit:
-    name: PHPUnit
+    name: PHPUnit (PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony }} + ${{ matrix.dependencies }} deps)'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
-      SYMFONY_REQUIRE: ${{matrix.symfony-require}}
+      SYMFONY_REQUIRE: ${{matrix.symfony}}
       SYMFONY_DEPRECATIONS_HELPER: weak
 
     strategy:
@@ -23,14 +24,15 @@ jobs:
           - highest
         stability:
           - stable
-        symfony-require:
-          - ""
+        symfony:
+          - 5.4.*
+          - 6.3.*
         include:
           # Tests the lowest set of dependencies
           - dependencies: lowest
             stability: stable
             php-version: 8.1
-            symfony-require: 5.4.*
+            symfony: 5.4.*
 
     steps:
       - name: Checkout
@@ -50,11 +52,11 @@ jobs:
         run: composer config minimum-stability stable
         if: ${{ matrix.stability == 'stable' }}
 
-      - name: Install dependencies with Composer
+      - name: Install dependencies with Composer (${{ matrix.dependencies }})
         uses: ramsey/composer-install@v2
         with:
           dependency-versions: ${{ matrix.dependencies }}
-          composer-options: --prefer-dist --optimize-autoloader
+          composer-options: --prefer-dist --no-progress --optimize-autoloader
 
       - name: Run PHPUnit
         run: composer test
