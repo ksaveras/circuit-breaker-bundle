@@ -9,7 +9,7 @@ file that was distributed with this source code.
 EOF;
 
 $finder = PhpCsFixer\Finder::create()
-    ->in([__DIR__.'/'])
+    ->in([__DIR__.'/src', __DIR__.'/tests'])
     ->name('*.php')
     ->notName('Configuration.php')
 ;
@@ -17,6 +17,7 @@ $finder = PhpCsFixer\Finder::create()
 $config = new PhpCsFixer\Config();
 
 return $config
+    ->setUsingCache(false)
     ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,

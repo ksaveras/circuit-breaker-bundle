@@ -2,10 +2,17 @@ parameters:
     level: max
     checkMissingIterableValueType: false
     paths:
-        - DependencyInjection
-        - Tests
-    excludePaths:
-        - DependencyInjection/Configuration.php
+        - src
+        - tests
+    ignoreErrors:
+        -
+            message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:arrayPrototype\\(\\)\\.$#"
+            count: 1
+            path: src/DependencyInjection/Configuration.php
+        -
+            message: "#^Cannot call method integerNode\\(\\) on Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeParentInterface\\|null\\.$#"
+            count: 1
+            path: src/DependencyInjection/Configuration.php
 
 includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon

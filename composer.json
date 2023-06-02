@@ -24,11 +24,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Ksaveras\\CircuitBreakerBundle\\": ""
-        },
-        "exclude-from-classmap": [
-            "/Tests/"
-        ]
+            "Ksaveras\\CircuitBreakerBundle\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ksaveras\\CircuitBreakerBundle\\Tests\\": "tests"
+        }
     },
     "scripts": {
         "phpcs": "./vendor/bin/php-cs-fixer fix --dry-run --diff",

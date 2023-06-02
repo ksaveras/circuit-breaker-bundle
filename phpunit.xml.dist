@@ -9,19 +9,12 @@
 >
   <testsuites>
     <testsuite name="Bundle Test Suit">
-      <directory>./Tests/</directory>
+      <directory>./tests/</directory>
     </testsuite>
   </testsuites>
   <source>
     <include>
-      <directory>./</directory>
+      <directory>./src/</directory>
     </include>
-    <exclude>
-      <directory>./.github/</directory>
-      <directory>./Tests/</directory>
-      <directory>./vendor/</directory>
-      <file>./.php-cs-fixer.php</file>
-      <file>./rector.php</file>
-    </exclude>
   </source>
 </phpunit>
