@@ -11,7 +11,7 @@ namespace Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ServiceStorageFactory extends AbstractStorageFactory
+final class ServiceStorageFactory extends AbstractStorageFactory
 {
     public function create(ContainerBuilder $container, string $name, array $config = []): string
     {

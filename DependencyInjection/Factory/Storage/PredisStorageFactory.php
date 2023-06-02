@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PredisStorageFactory extends AbstractStorageFactory
+final class PredisStorageFactory extends AbstractStorageFactory
 {
     public function create(ContainerBuilder $container, string $name, array $config = []): string
     {

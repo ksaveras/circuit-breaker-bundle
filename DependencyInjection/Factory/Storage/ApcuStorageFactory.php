@@ -12,7 +12,7 @@ namespace Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class ApcuStorageFactory extends AbstractStorageFactory
+final class ApcuStorageFactory extends AbstractStorageFactory
 {
     public function create(ContainerBuilder $container, string $name, array $config = []): string
     {

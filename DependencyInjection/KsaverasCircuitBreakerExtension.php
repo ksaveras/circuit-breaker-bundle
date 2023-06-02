@@ -23,14 +23,14 @@ final class KsaverasCircuitBreakerExtension extends ConfigurableExtension
     /**
      * @var array<string, StorageFactoryInterface>
      */
-    private $storageFactories = [];
+    private array $storageFactories = [];
 
     public function addStorageFactory(StorageFactoryInterface $factory): void
     {
         $this->storageFactories[$factory->getType()] = $factory;
     }
 
-    protected function loadInternal(array $config, ContainerBuilder $container)
+    protected function loadInternal(array $config, ContainerBuilder $container): void
     {
         $configPath = implode(\DIRECTORY_SEPARATOR, [__DIR__, '..', 'Resources', 'config']);
         $loader = new Loader\XmlFileLoader($container, new FileLocator($configPath));

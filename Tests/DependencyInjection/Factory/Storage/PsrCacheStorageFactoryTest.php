@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PsrCacheStorageFactoryTest extends TestCase
+final class PsrCacheStorageFactoryTest extends TestCase
 {
     public function testCreate(): void
     {
