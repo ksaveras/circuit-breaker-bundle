@@ -78,8 +78,8 @@ final class KsaverasCircuitBreakerExtension extends ConfigurableExtension
             if ($options['enabled']) {
                 return match ($type) {
                     'constant' => new Definition(ConstantRetryPolicy::class, [$options['reset_timeout']]),
-                    'exponential' => new Definition(ExponentialRetryPolicy::class, [$options['reset_timeout'], $options['maximum_timeout'], $options['base']]),
-                    'linear' => new Definition(LinearRetryPolicy::class, [$options['reset_timeout']]),
+                    'exponential' => new Definition(ExponentialRetryPolicy::class, [$options['reset_timeout'], $options['maximum_timeout'], (float) $options['base']]),
+                    'linear' => new Definition(LinearRetryPolicy::class, [$options['reset_timeout'], $options['maximum_timeout'], $options['step']]),
                     default => throw new \InvalidArgumentException(),
                 };
             }

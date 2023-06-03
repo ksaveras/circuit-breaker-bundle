@@ -206,7 +206,7 @@ final class KsaverasCircuitBreakerExtensionTest extends TestCase
         $retryPolicyDefinition = $definition->getArgument(2);
         self::assertInstanceOf(Definition::class, $retryPolicyDefinition);
         self::assertSame(ExponentialRetryPolicy::class, $retryPolicyDefinition->getClass());
-        self::assertSame([10, 600, 2], $retryPolicyDefinition->getArguments());
+        self::assertSame([10, 600, 2.0], $retryPolicyDefinition->getArguments());
 
         $factory = $container->get('circuit_breaker_factory_public');
         self::assertInstanceOf(CircuitBreakerFactory::class, $factory);

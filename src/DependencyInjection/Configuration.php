@@ -10,6 +10,7 @@
 namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -97,7 +98,6 @@ final class Configuration implements ConfigurationInterface
                                 if (!isset($config['retry_policy'])) {
                                     $values[$name]['retry_policy']['exponential'] = ['enabled' => true];
                                 }
-
                             }
 
                             return $values;
@@ -134,56 +134,9 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->arrayNode('exponential')
-                                    ->treatFalseLike(['enabled' => false])
-                                    ->treatTrueLike(['enabled' => true])
-                                    ->treatNullLike(['enabled' => true])
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->booleanNode('enabled')->defaultFalse()->end()
-                                        ->integerNode('reset_timeout')->defaultValue(10)->min(1)->end()
-                                        ->integerNode('base')->defaultValue(2)->end()
-                                        ->integerNode('maximum_timeout')->defaultValue(86400)->min(1)->end()
-                                    ->end()
-                                ->end()
-                                ->arrayNode('linear')
-                                    ->treatFalseLike(['enabled' => false])
-                                    ->treatTrueLike(['enabled' => true])
-                                    ->treatNullLike(['enabled' => true])
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->booleanNode('enabled')->defaultFalse()->end()
-                                        ->integerNode('reset_timeout')
-                                            ->info('Number of seconds the circuit breaker will be in open state')
-                                            ->defaultValue(10)
-                                            ->min(1)
-                                        ->end()
-                                        ->integerNode('step')
-                                            ->info('Step info')
-                                            ->defaultValue(60)
-                                            ->min(1)
-                                        ->end()
-                                        ->integerNode('maximum_timeout')
-                                            ->info('Maximum number of seconds for open circuit')
-                                            ->defaultValue(86400)
-                                            ->min(1)
-                                        ->end()
-                                    ->end()
-                                ->end()
-                                ->arrayNode('constant')
-                                    ->treatFalseLike(['enabled' => false])
-                                    ->treatTrueLike(['enabled' => true])
-                                    ->treatNullLike(['enabled' => true])
-                                    ->addDefaultsIfNotSet()
-                                    ->children()
-                                        ->booleanNode('enabled')->defaultFalse()->end()
-                                        ->integerNode('reset_timeout')
-                                            ->info('Number of seconds the circuit breaker will be in open state')
-                                            ->defaultValue(10)
-                                            ->min(1)
-                                        ->end()
-                                    ->end()
-                                ->end()
+                                ->append($this->addExponentialRetryPolicyNode())
+                                ->append($this->addLinearRetryPolicyNode())
+                                ->append($this->addConstantRetryPolicyNode())
                             ->end()
                             ->validate()
                                 ->ifTrue(static fn($v): bool => 1 !== count(array_filter(
@@ -197,5 +150,88 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+    }
+
+    private function addExponentialRetryPolicyNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('exponential');
+
+        $node = $treeBuilder->getRootNode()
+            ->treatFalseLike(['enabled' => false])
+            ->treatTrueLike(['enabled' => true])
+            ->treatNullLike(['enabled' => true])
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')->defaultFalse()->end()
+                ->integerNode('reset_timeout')
+                    ->info('Number of seconds the circuit breaker will be in open state')
+                    ->defaultValue(10)
+                    ->min(1)
+                ->end()
+                ->floatNode('base')
+                    ->info('Base value for exponential function')
+                    ->defaultValue(2.0)
+                    ->min(1.01)
+                ->end()
+                ->integerNode('maximum_timeout')
+                    ->info('Maximum number of seconds for open circuit')
+                    ->defaultValue(86400)
+                    ->min(10)
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    private function addLinearRetryPolicyNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('linear');
+
+        $node = $treeBuilder->getRootNode()
+            ->treatFalseLike(['enabled' => false])
+            ->treatTrueLike(['enabled' => true])
+            ->treatNullLike(['enabled' => true])
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')->defaultFalse()->end()
+                ->integerNode('reset_timeout')
+                    ->info('Number of seconds the circuit breaker will be in open state')
+                    ->defaultValue(10)
+                    ->min(1)
+                ->end()
+                ->integerNode('step')
+                    ->info('Step size in seconds for increasing the open circuit TTL')
+                    ->defaultValue(60)
+                    ->min(1)
+                ->end()
+                ->integerNode('maximum_timeout')
+                    ->info('Maximum number of seconds for open circuit')
+                    ->defaultValue(86400)
+                    ->min(10)
+                ->end()
+            ->end();
+
+        return $node;
+    }
+
+    private function addConstantRetryPolicyNode(): NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('constant');
+
+        $node = $treeBuilder->getRootNode()
+            ->treatFalseLike(['enabled' => false])
+            ->treatTrueLike(['enabled' => true])
+            ->treatNullLike(['enabled' => true])
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->booleanNode('enabled')->defaultFalse()->end()
+                ->integerNode('reset_timeout')
+                    ->info('Number of seconds the circuit breaker will be in open state')
+                    ->defaultValue(10)
+                    ->min(1)
+                ->end()
+            ->end();
+
+        return $node;
     }
 }
