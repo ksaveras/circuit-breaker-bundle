@@ -12,6 +12,7 @@ use Rector\CodingStyle\Rector\ClassConst\VarConstantCommentRector;
 use Rector\CodingStyle\Rector\ClassMethod\NewlineBeforeNewAssignSetRector;
 use Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector;
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\Rector\Class_\AddSeeTestAnnotationRector;
 use Rector\PHPUnit\Set\PHPUnitLevelSetList;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Set\ValueObject\LevelSetList;
@@ -20,9 +21,8 @@ use Rector\TypeDeclaration\Rector\FunctionLike\AddReturnTypeDeclarationFromYield
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
-        __DIR__.'/DependencyInjection',
-        __DIR__.'/Resources',
-        __DIR__.'/Tests',
+        __DIR__.'/src',
+        __DIR__.'/tests',
     ]);
 
     // define sets of rules
@@ -42,6 +42,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->skip([
         AddReturnTypeDeclarationFromYieldsRector::class,
+        AddSeeTestAnnotationRector::class,
         FlipTypeControlToUseExclusiveTypeRector::class,
         NewlineAfterStatementRector::class,
         NewlineBeforeNewAssignSetRector::class,

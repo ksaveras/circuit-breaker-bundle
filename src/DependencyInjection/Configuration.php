@@ -30,11 +30,12 @@ final class Configuration implements ConfigurationInterface
     private function addStorageSection(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
+            ->fixXmlConfig('storage')
             ->children()
-                ->arrayNode('storage')
+                ->arrayNode('storages')
                     ->useAttributeAsKey('name')
                     ->beforeNormalization()
-                        ->always(static function ($config) {
+                        ->always(static function ($config): array {
                             if (!\is_array($config)) {
                                 return [];
                             }
@@ -50,9 +51,8 @@ final class Configuration implements ConfigurationInterface
                                         $config[$name] = ['type' => 'service', 'id' => substr($v, 1)];
                                     } else {
                                         $config[$name] = match ($name) {
-                                            'apcu', 'in_memory' => ['type' => $v],
-                                            'redis', 'predis' => ['type' => $name, 'client' => $v],
-                                            'psr_cache' => ['type' => $name, 'pool' => $v],
+                                            'in_memory' => ['type' => $v],
+                                            'cache' => ['type' => $name, 'pool' => $v],
                                             default => ['type' => 'service', 'id' => $v],
                                         };
                                     }
@@ -68,24 +68,15 @@ final class Configuration implements ConfigurationInterface
                             ->thenInvalid('You must specify service "id" for storage type "service".')
                         ->end()
                         ->validate()
-                            ->ifTrue(static fn($v): bool => 'redis' === $v['type'] && !isset($v['client']))
-                            ->thenInvalid('You must specify "client" for storage type "redis".')
-                        ->end()
-                        ->validate()
-                            ->ifTrue(static fn($v): bool => 'predis' === $v['type'] && !isset($v['client']))
-                            ->thenInvalid('You must specify "client" for storage type "predis".')
-                        ->end()
-                        ->validate()
-                            ->ifTrue(static fn($v): bool => 'psr_cache' === $v['type'] && !isset($v['pool']))
-                            ->thenInvalid('You must specify "pool" for storage type "psr_cache".')
+                            ->ifTrue(static fn($v): bool => 'cache' === $v['type'] && !isset($v['pool']))
+                            ->thenInvalid('You must specify "pool" for storage type "cache".')
                         ->end()
                         ->children()
                             ->enumNode('type')
-                                ->values(['service', 'apcu', 'in_memory', 'redis', 'psr_cache', 'predis'])
+                                ->values(['service', 'in_memory', 'cache'])
                                 ->isRequired()
                             ->end()
                             ->scalarNode('id')->end()
-                            ->scalarNode('client')->end()
                             ->scalarNode('pool')->end()
                         ->end()
                     ->end()
@@ -100,6 +91,18 @@ final class Configuration implements ConfigurationInterface
             ->fixXmlConfig('circuit_breaker')
             ->children()
                 ->arrayNode('circuit_breakers')
+                    ->beforeNormalization()
+                        ->always(static function (array $values): array {
+                            foreach ($values as $name => $config) {
+                                if (!isset($config['retry_policy'])) {
+                                    $values[$name]['retry_policy']['exponential'] = ['enabled' => true];
+                                }
+
+                            }
+
+                            return $values;
+                        })
+                    ->end()
                     ->useAttributeAsKey('name')
                     ->arrayPrototype()
                     ->children()
@@ -114,26 +117,80 @@ final class Configuration implements ConfigurationInterface
                             ->min(1)
                         ->end()
                         ->arrayNode('retry_policy')
+                            ->beforeNormalization()
+                                ->always(static function (array $values): array {
+                                    foreach ($values as $type => $value) {
+                                        if (!is_array($value)) {
+                                            continue;
+                                        }
+                                        if (isset($value['enabled'])) {
+                                            continue;
+                                        }
+                                        $values[$type]['enabled'] = true;
+                                    }
+
+                                    return $values;
+                                })
+                            ->end()
                             ->addDefaultsIfNotSet()
                             ->children()
-                                ->enumNode('type')
-                                    ->values(['exponential', 'constant', 'linear'])
-                                    ->defaultValue('exponential')
-                                    ->cannotBeEmpty()
-                                ->end()
-                                ->arrayNode('options')
+                                ->arrayNode('exponential')
+                                    ->treatFalseLike(['enabled' => false])
+                                    ->treatTrueLike(['enabled' => true])
+                                    ->treatNullLike(['enabled' => true])
                                     ->addDefaultsIfNotSet()
                                     ->children()
+                                        ->booleanNode('enabled')->defaultFalse()->end()
+                                        ->integerNode('reset_timeout')->defaultValue(10)->min(1)->end()
+                                        ->integerNode('base')->defaultValue(2)->end()
+                                        ->integerNode('maximum_timeout')->defaultValue(86400)->min(1)->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode('linear')
+                                    ->treatFalseLike(['enabled' => false])
+                                    ->treatTrueLike(['enabled' => true])
+                                    ->treatNullLike(['enabled' => true])
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->booleanNode('enabled')->defaultFalse()->end()
                                         ->integerNode('reset_timeout')
+                                            ->info('Number of seconds the circuit breaker will be in open state')
+                                            ->defaultValue(10)
+                                            ->min(1)
+                                        ->end()
+                                        ->integerNode('step')
+                                            ->info('Step info')
                                             ->defaultValue(60)
                                             ->min(1)
                                         ->end()
                                         ->integerNode('maximum_timeout')
+                                            ->info('Maximum number of seconds for open circuit')
                                             ->defaultValue(86400)
                                             ->min(1)
                                         ->end()
                                     ->end()
                                 ->end()
+                                ->arrayNode('constant')
+                                    ->treatFalseLike(['enabled' => false])
+                                    ->treatTrueLike(['enabled' => true])
+                                    ->treatNullLike(['enabled' => true])
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->booleanNode('enabled')->defaultFalse()->end()
+                                        ->integerNode('reset_timeout')
+                                            ->info('Number of seconds the circuit breaker will be in open state')
+                                            ->defaultValue(10)
+                                            ->min(1)
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->validate()
+                                ->ifTrue(static fn($v): bool => 1 !== count(array_filter(
+                                    array_values($v),
+                                    static fn ($i) => $i['enabled'] ?? false
+                                )))
+                                ->thenInvalid('Only one retry policy can be configured per circuit breaker.')
                             ->end()
                         ->end()
                     ->end()

@@ -9,7 +9,7 @@
  */
 namespace Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage;
 
-use Symfony\Component\DependencyInjection\ChildDefinition;
+use Ksaveras\CircuitBreaker\Storage\InMemoryStorage;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class InMemoryStorageFactory extends AbstractStorageFactory
@@ -17,7 +17,7 @@ final class InMemoryStorageFactory extends AbstractStorageFactory
     public function create(ContainerBuilder $container, string $name, array $config = []): string
     {
         $id = $this->serviceId($name);
-        $container->setDefinition($id, new ChildDefinition('ksaveras_circuit_breaker.storage.in_memory.abstract'));
+        $container->register($id, InMemoryStorage::class);
 
         return $id;
     }

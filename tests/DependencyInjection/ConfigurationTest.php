@@ -23,204 +23,118 @@ final class ConfigurationTest extends TestCase
         $configuration = new Configuration();
 
         $processor = new Processor();
-        $config = $processor->processConfiguration($configuration, $configs);
+        $config = $processor->processConfiguration(
+            $configuration,
+            ['ksaveras_circuit_breaker' => $configs],
+        );
 
         self::assertEquals($expected, $config);
     }
 
     public static function configsDataProvider(): iterable
     {
-        yield [
-            [
-                'ksaveras_circuit_breaker' => [
-                    'circuit_breakers' => [
-                        'web_api' => [
-                            'storage' => 'in_memory',
-                            'retry_policy' => [
-                                'type' => 'exponential',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'storage' => [],
-                'circuit_breakers' => [
-                    'web_api' => [
-                        'storage' => 'in_memory',
-                        'failure_threshold' => 3,
-                        'retry_policy' => [
-                            'type' => 'exponential',
-                            'options' => [
-                                'reset_timeout' => 60,
-                                'maximum_timeout' => 86400,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
+        yield 'empty configuration' => [
+            [],
+            ['circuit_breakers' => [], 'storages' => []],
         ];
 
-        yield [
-            [],
+        yield 'storage configuration' => [
             [
-                'storage' => [],
+                'storages' => [
+                    'in_memory' => null,
+                    'my_memory' => ['type' => 'in_memory'],
+                    'cache' => 'cache.pool.array',
+                    'cache_redis' => ['type' => 'cache', 'pool' => 'cache.pool.redis'],
+                    'service_one' => '@app_service.one',
+                    'service_two' => ['type' => 'service', 'id' => 'app_service.two'],
+                ],
+            ],
+            [
                 'circuit_breakers' => [],
+                'storages' => [
+                    'in_memory' => ['type' => 'in_memory'],
+                    'my_memory' => ['type' => 'in_memory'],
+                    'cache' => ['type' => 'cache', 'pool' => 'cache.pool.array'],
+                    'cache_redis' => ['type' => 'cache', 'pool' => 'cache.pool.redis'],
+                    'service_one' => ['type' => 'service', 'id' => 'app_service.one'],
+                    'service_two' => ['type' => 'service', 'id' => 'app_service.two'],
+                ],
             ],
         ];
 
-        yield [
+        yield 'exponential retry policy defaults' => [
             [
-                'ksaveras_circuit_breaker' => [
-                    'circuit_breakers' => [
-                        'web_api' => [
-                            'storage' => 'in_memory',
-                        ],
+                'circuit_breakers' => [
+                    'web_api' => [
+                        'storage' => 'memory',
                     ],
                 ],
             ],
             [
-                'storage' => [],
                 'circuit_breakers' => [
                     'web_api' => [
-                        'storage' => 'in_memory',
+                        'storage' => 'memory',
                         'failure_threshold' => 3,
-                        'retry_policy' => [
-                            'type' => 'exponential',
-                            'options' => [
-                                'reset_timeout' => 60,
-                                'maximum_timeout' => 86400,
-                            ],
-                        ],
+                        'retry_policy' => self::getDefaultPolicyConfiguration(),
                     ],
                 ],
+                'storages' => [],
             ],
         ];
 
-        yield [
+        $policyConfig = self::getDefaultPolicyConfiguration();
+        $policyConfig['exponential']['enabled'] = false;
+        $policyConfig['linear']['enabled'] = true;
+
+        yield 'linear retry policy defaults' => [
             [
-                'ksaveras_circuit_breaker' => [
-                    'circuit_breakers' => [
-                        'web_api' => [
-                            'storage' => 'storage_service',
-                            'failure_threshold' => 10,
-                            'retry_policy' => [
-                                'type' => 'constant',
-                                'options' => [
-                                    'reset_timeout' => 600,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'storage' => [],
                 'circuit_breakers' => [
                     'web_api' => [
-                        'storage' => 'storage_service',
-                        'failure_threshold' => 10,
+                        'storage' => 'memory',
                         'retry_policy' => [
-                            'type' => 'constant',
-                            'options' => [
-                                'reset_timeout' => 600,
-                                'maximum_timeout' => 86400,
-                            ],
+                            'linear' => true,
                         ],
                     ],
                 ],
             ],
-        ];
-    }
-
-    #[DataProvider('storageTypeConfigProvider')]
-    public function testStorageTypeConfiguration(array $config, array $expected): void
-    {
-        $configuration = new Configuration();
-
-        $configs = [
-            'ksaveras_circuit_breaker' => $config,
-        ];
-
-        $processor = new Processor();
-        $config = $processor->processConfiguration($configuration, $configs);
-
-        self::assertEquals($expected, $config['storage']);
-    }
-
-    public static function storageTypeConfigProvider(): iterable
-    {
-        yield [
-            [],
-            [],
-        ];
-
-        yield [
             [
-                'storage' => [
-                    'apcu' => null,
+                'circuit_breakers' => [
+                    'web_api' => [
+                        'storage' => 'memory',
+                        'failure_threshold' => 3,
+                        'retry_policy' => $policyConfig,
+                    ],
                 ],
-            ],
-            [
-                'apcu' => [
-                    'type' => 'apcu',
-                ],
+                'storages' => [],
             ],
         ];
 
-        yield [
+        $policyConfig = self::getDefaultPolicyConfiguration();
+        $policyConfig['exponential']['enabled'] = false;
+        $policyConfig['constant']['enabled'] = true;
+
+        yield 'constant retry policy defaults' => [
             [
-                'storage' => [
-                    'my_storage' => [
-                        'type' => 'apcu',
+                'circuit_breakers' => [
+                    'web_api' => [
+                        'storage' => 'memory',
+                        'retry_policy' => [
+                            'constant' => true,
+                        ],
                     ],
                 ],
             ],
             [
-                'my_storage' => [
-                    'type' => 'apcu',
+                'circuit_breakers' => [
+                    'web_api' => [
+                        'storage' => 'memory',
+                        'failure_threshold' => 3,
+                        'retry_policy' => $policyConfig,
+                    ],
                 ],
+                'storages' => [],
             ],
         ];
-
-        yield [
-            [
-                'storage' => [
-                    'my_storage' => 'private_storage',
-                ],
-            ],
-            [
-                'my_storage' => [
-                    'type' => 'service',
-                    'id' => 'private_storage',
-                ],
-            ],
-        ];
-    }
-
-    public function testStorageTypeService(): void
-    {
-        $configuration = new Configuration();
-
-        $configs = [
-            'ksaveras_circuit_breaker' => [
-                'storage' => [
-                    'my_storage' => '@service_id',
-                ],
-            ],
-        ];
-
-        $expected = [
-            'my_storage' => [
-                'type' => 'service',
-                'id' => 'service_id',
-            ],
-        ];
-
-        $processor = new Processor();
-        $config = $processor->processConfiguration($configuration, $configs);
-
-        self::assertEquals($expected, $config['storage']);
     }
 
     public function testMissingTypeServiceId(): void
@@ -230,7 +144,7 @@ final class ConfigurationTest extends TestCase
 
         $configs = [
             'ksaveras_circuit_breaker' => [
-                'storage' => [
+                'storages' => [
                     'my_storage' => [
                         'type' => 'service',
                     ],
@@ -242,16 +156,16 @@ final class ConfigurationTest extends TestCase
         $processor->processConfiguration(new Configuration(), $configs);
     }
 
-    public function testMissingPhpRedisClientConfig(): void
+    public function testMissingCachePoolConfig(): void
     {
         $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('You must specify "client" for storage type "redis".');
+        $this->expectExceptionMessage('You must specify "pool" for storage type "cache".');
 
         $configs = [
             'ksaveras_circuit_breaker' => [
-                'storage' => [
+                'storages' => [
                     'my_storage' => [
-                        'type' => 'redis',
+                        'type' => 'cache',
                     ],
                 ],
             ],
@@ -261,41 +175,25 @@ final class ConfigurationTest extends TestCase
         $processor->processConfiguration(new Configuration(), $configs);
     }
 
-    public function testMissingPredisClientConfig(): void
+    private static function getDefaultPolicyConfiguration(): array
     {
-        $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('You must specify "client" for storage type "predis".');
-
-        $configs = [
-            'ksaveras_circuit_breaker' => [
-                'storage' => [
-                    'my_storage' => [
-                        'type' => 'predis',
-                    ],
-                ],
+        return [
+            'exponential' => [
+                'reset_timeout' => 10,
+                'base' => 2,
+                'maximum_timeout' => 86400,
+                'enabled' => true,
+            ],
+            'linear' => [
+                'reset_timeout' => 10,
+                'step' => 60,
+                'maximum_timeout' => 86400,
+                'enabled' => false,
+            ],
+            'constant' => [
+                'reset_timeout' => 10,
+                'enabled' => false,
             ],
         ];
-
-        $processor = new Processor();
-        $processor->processConfiguration(new Configuration(), $configs);
-    }
-
-    public function testMissingPsrCachePoolConfig(): void
-    {
-        $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('You must specify "pool" for storage type "psr_cache".');
-
-        $configs = [
-            'ksaveras_circuit_breaker' => [
-                'storage' => [
-                    'my_storage' => [
-                        'type' => 'psr_cache',
-                    ],
-                ],
-            ],
-        ];
-
-        $processor = new Processor();
-        $processor->processConfiguration(new Configuration(), $configs);
     }
 }

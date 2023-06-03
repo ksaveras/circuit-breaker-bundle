@@ -9,17 +9,14 @@
  */
 namespace Ksaveras\CircuitBreakerBundle;
 
-use Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage\ApcuStorageFactory;
+use Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage\CacheStorageFactory;
 use Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage\InMemoryStorageFactory;
-use Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage\PredisStorageFactory;
-use Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage\PsrCacheStorageFactory;
-use Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage\RedisStorageFactory;
 use Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage\ServiceStorageFactory;
 use Ksaveras\CircuitBreakerBundle\DependencyInjection\KsaverasCircuitBreakerExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class KsaverasCircuitBreakerBundle extends Bundle
+final class KsaverasCircuitBreakerBundle extends Bundle
 {
     public function build(ContainerBuilder $container): void
     {
@@ -27,11 +24,8 @@ class KsaverasCircuitBreakerBundle extends Bundle
 
         /** @var KsaverasCircuitBreakerExtension $extension */
         $extension = $container->getExtension('ksaveras_circuit_breaker');
-        $extension->addStorageFactory(new ApcuStorageFactory());
         $extension->addStorageFactory(new InMemoryStorageFactory());
-        $extension->addStorageFactory(new PredisStorageFactory());
-        $extension->addStorageFactory(new PsrCacheStorageFactory());
-        $extension->addStorageFactory(new RedisStorageFactory());
+        $extension->addStorageFactory(new CacheStorageFactory());
         $extension->addStorageFactory(new ServiceStorageFactory());
     }
 }

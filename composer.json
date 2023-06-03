@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "ksaveras/circuit-breaker": "^1.0",
+        "ksaveras/circuit-breaker": "dev-release-v2.0.0",
         "symfony/framework-bundle": "^5.0|^6.0|^7.0"
     },
     "require-dev": {
@@ -39,7 +39,7 @@
         "rector": "./vendor/bin/rector process --dry-run",
         "rector:fix": "./vendor/bin/rector process",
         "test": "./vendor/bin/phpunit",
-        "test:coverage": "@php -dapc.enable_cli=1 ./vendor/bin/phpunit --coverage-clover=coverage/clover.xml"
+        "test:coverage": "./vendor/bin/phpunit --coverage-clover=coverage/clover.xml"
     },
     "config": {
         "sort-packages": true
