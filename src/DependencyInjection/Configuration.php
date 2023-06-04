@@ -156,7 +156,7 @@ final class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('exponential');
 
-        $node = $treeBuilder->getRootNode()
+        return $treeBuilder->getRootNode()
             ->treatFalseLike(['enabled' => false])
             ->treatTrueLike(['enabled' => true])
             ->treatNullLike(['enabled' => true])
@@ -179,15 +179,13 @@ final class Configuration implements ConfigurationInterface
                     ->min(10)
                 ->end()
             ->end();
-
-        return $node;
     }
 
     private function addLinearRetryPolicyNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('linear');
 
-        $node = $treeBuilder->getRootNode()
+        return $treeBuilder->getRootNode()
             ->treatFalseLike(['enabled' => false])
             ->treatTrueLike(['enabled' => true])
             ->treatNullLike(['enabled' => true])
@@ -210,15 +208,13 @@ final class Configuration implements ConfigurationInterface
                     ->min(10)
                 ->end()
             ->end();
-
-        return $node;
     }
 
     private function addConstantRetryPolicyNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('constant');
 
-        $node = $treeBuilder->getRootNode()
+        return $treeBuilder->getRootNode()
             ->treatFalseLike(['enabled' => false])
             ->treatTrueLike(['enabled' => true])
             ->treatNullLike(['enabled' => true])
@@ -231,7 +227,5 @@ final class Configuration implements ConfigurationInterface
                     ->min(1)
                 ->end()
             ->end();
-
-        return $node;
     }
 }
