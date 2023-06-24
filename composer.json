@@ -49,9 +49,14 @@
         "rector:fix": "./vendor/bin/rector process",
         "test": "./vendor/bin/phpunit",
         "test:coverage": "./vendor/bin/phpunit --coverage-clover=coverage/clover.xml",
-        "static-analysis": ["@phpcs", "@phpstan", "@rector"]
+        "static-analysis": [
+            "@phpcs",
+            "@phpstan",
+            "@rector"
+        ]
     },
     "config": {
         "sort-packages": true
-    }
+    },
+    "version": "1.0.0"
 }
