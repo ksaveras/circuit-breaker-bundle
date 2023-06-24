@@ -66,6 +66,7 @@ final class KsaverasCircuitBreakerExtensionTest extends TestCase
                             'maximum_timeout' => 600,
                         ],
                     ],
+                    'header_policy' => ['retry_after', 'rate_limit'],
                 ],
                 'intraApi' => [
                     'storage' => 'cache',
@@ -76,6 +77,7 @@ final class KsaverasCircuitBreakerExtensionTest extends TestCase
                             'maximum_timeout' => 600,
                         ],
                     ],
+                    'header_policy' => ['retry_after', 'rate_limit'],
                 ],
             ],
             'storages' => [
@@ -227,6 +229,12 @@ final class KsaverasCircuitBreakerExtensionTest extends TestCase
         self::assertIsArray($factory);
         self::assertInstanceOf(Definition::class, $factory[0]);
         self::assertSame(CircuitBreakerFactory::class, $factory[0]->getClass());
+
+        $factoryArguments = $factory[0]->getArguments();
+        self::assertInstanceOf(Reference::class, $factoryArguments[1]);
+        self::assertInstanceOf(Definition::class, $factoryArguments[2]);
+        self::assertInstanceOf(Definition::class, $factoryArguments[3]);
+
         self::assertSame('create', $factory[1]);
     }
 
