@@ -2,7 +2,15 @@
     "name": "ksaveras/circuit-breaker-bundle",
     "type": "symfony-bundle",
     "description": "Circuit Breaker Symfony Bundle",
-    "keywords": ["circuit-breaker", "circuit-breaker-bundle", "symfony-bundle", "api"],
+    "keywords": [
+        "api",
+        "circuit breaker",
+        "circuit breaker bundle",
+        "error handling",
+        "fault tolerance",
+        "microservices",
+        "symfony bundle"
+    ],
     "license": "MIT",
     "authors": [
         {
