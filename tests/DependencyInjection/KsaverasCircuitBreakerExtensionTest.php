@@ -92,11 +92,17 @@ final class KsaverasCircuitBreakerExtensionTest extends TestCase
 
         $this->compileContainer($container);
 
-        $this->assertCircuitBreakerDefinition($container, 'web_api', 'ksaveras_circuit_breaker.circuit.web_api');
-        $this->assertArgumentAlias($container, '$webApi', 'ksaveras_circuit_breaker.circuit.web_api');
+        self::assertTrue($container->has('ksaveras_circuit_breaker.circuit.web_api'));
+        $definition = $container->getDefinition('ksaveras_circuit_breaker.circuit.web_api');
 
-        $this->assertCircuitBreakerDefinition($container, 'intraApi', 'ksaveras_circuit_breaker.circuit.intraApi');
-        $this->assertArgumentAlias($container, '$intraApi', 'ksaveras_circuit_breaker.circuit.intraApi');
+        $this->runAssertCircuitBreakerDefinition($definition, 'web_api');
+        $this->runAssertArgumentAlias($container, '$webApi', 'ksaveras_circuit_breaker.circuit.web_api');
+
+        self::assertTrue($container->has('ksaveras_circuit_breaker.circuit.intraApi'));
+        $definition = $container->getDefinition('ksaveras_circuit_breaker.circuit.intraApi');
+
+        $this->runAssertCircuitBreakerDefinition($definition, 'intraApi');
+        $this->runAssertArgumentAlias($container, '$intraApi', 'ksaveras_circuit_breaker.circuit.intraApi');
     }
 
     public function testInMemoryStorage(): void
@@ -212,11 +218,8 @@ final class KsaverasCircuitBreakerExtensionTest extends TestCase
         self::assertInstanceOf(CircuitBreakerFactory::class, $factory);
     }
 
-    private function assertCircuitBreakerDefinition(ContainerBuilder $container, string $name, string $serviceId): void
+    private function runAssertCircuitBreakerDefinition(Definition $definition, string $name): void
     {
-        self::assertTrue($container->has($serviceId));
-        $definition = $container->getDefinition($serviceId);
-
         self::assertSame(CircuitBreaker::class, $definition->getClass());
         self::assertSame([$name], $definition->getArguments());
 
@@ -227,7 +230,7 @@ final class KsaverasCircuitBreakerExtensionTest extends TestCase
         self::assertSame('create', $factory[1]);
     }
 
-    private function assertArgumentAlias(ContainerBuilder $container, string $name, string $serviceId): void
+    private function runAssertArgumentAlias(ContainerBuilder $container, string $name, string $serviceId): void
     {
         $argumentAlias = CircuitBreakerInterface::class.' '.$name;
         self::assertTrue($container->hasAlias($argumentAlias));

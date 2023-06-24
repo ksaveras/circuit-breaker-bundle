@@ -12,6 +12,9 @@ namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 use Ksaveras\CircuitBreaker\CircuitBreaker;
 use Ksaveras\CircuitBreaker\CircuitBreakerFactory;
 use Ksaveras\CircuitBreaker\CircuitBreakerInterface;
+use Ksaveras\CircuitBreaker\HeaderPolicy\PolicyChain;
+use Ksaveras\CircuitBreaker\HeaderPolicy\RateLimitPolicy;
+use Ksaveras\CircuitBreaker\HeaderPolicy\RetryAfterPolicy;
 use Ksaveras\CircuitBreaker\Policy\ConstantRetryPolicy;
 use Ksaveras\CircuitBreaker\Policy\ExponentialRetryPolicy;
 use Ksaveras\CircuitBreaker\Policy\LinearRetryPolicy;
@@ -60,6 +63,7 @@ final class KsaverasCircuitBreakerExtension extends ConfigurableExtension
                     $serviceConfig['failure_threshold'],
                     new Reference(sprintf('ksaveras_circuit_breaker.storage.%s', $serviceConfig['storage'])),
                     $policyDefinition,
+                    $this->createHeaderPolicyDefinition($serviceConfig['header_policy']),
                 ]);
 
             $id = sprintf('ksaveras_circuit_breaker.circuit.%s', $name);
@@ -86,5 +90,24 @@ final class KsaverasCircuitBreakerExtension extends ConfigurableExtension
         }
 
         throw new \InvalidArgumentException();
+    }
+
+    private function createHeaderPolicyDefinition(array $policyOptions): Definition
+    {
+        $headerPolicies = [];
+
+        foreach ($policyOptions as $policyName) {
+            $definition = match ($policyName) {
+                'retry_after' => new Definition(RetryAfterPolicy::class),
+                'rate_limit' => new Definition(RateLimitPolicy::class),
+                default => null,
+            };
+
+            if (null !== $definition) {
+                $headerPolicies[] = $definition;
+            }
+        }
+
+        return new Definition(PolicyChain::class, [$headerPolicies]);
     }
 }

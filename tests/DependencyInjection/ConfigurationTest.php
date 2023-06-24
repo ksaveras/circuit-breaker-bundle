@@ -76,6 +76,7 @@ final class ConfigurationTest extends TestCase
                         'storage' => 'memory',
                         'failure_threshold' => 3,
                         'retry_policy' => self::getDefaultPolicyConfiguration(),
+                        'header_policy' => ['retry_after', 'rate_limit'],
                     ],
                 ],
                 'storages' => [],
@@ -103,6 +104,7 @@ final class ConfigurationTest extends TestCase
                         'storage' => 'memory',
                         'failure_threshold' => 3,
                         'retry_policy' => $policyConfig,
+                        'header_policy' => ['retry_after', 'rate_limit'],
                     ],
                 ],
                 'storages' => [],
@@ -130,6 +132,29 @@ final class ConfigurationTest extends TestCase
                         'storage' => 'memory',
                         'failure_threshold' => 3,
                         'retry_policy' => $policyConfig,
+                        'header_policy' => ['retry_after', 'rate_limit'],
+                    ],
+                ],
+                'storages' => [],
+            ],
+        ];
+
+        yield 'header policies as null' => [
+            [
+                'circuit_breakers' => [
+                    'web_api' => [
+                        'storage' => 'memory',
+                        'header_policy' => null,
+                    ],
+                ],
+            ],
+            [
+                'circuit_breakers' => [
+                    'web_api' => [
+                        'storage' => 'memory',
+                        'failure_threshold' => 3,
+                        'retry_policy' => self::getDefaultPolicyConfiguration(),
+                        'header_policy' => [],
                     ],
                 ],
                 'storages' => [],
