@@ -32,7 +32,7 @@ jobs:
           - dependencies: lowest
             stability: stable
             php-version: 8.1
-            symfony: 5.4.*
+            symfony: 6.3.*
 
     steps:
       - name: Checkout

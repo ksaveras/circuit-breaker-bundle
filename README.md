@@ -51,18 +51,15 @@ return [
 ksaveras_circuit_breaker:
     circuit_breakers:
         cb_name:
-            storage: 'apcu'
+            storage: 'cache'
             failure_threshold: 3
-            retry_policy: 
-                type: 'exponential'
-                options:
+            retry_policy:
+                exponential:
                     reset_timeout: 60
+                    maximum_timeout: 86400
 
     storage:
-        apcu: ~
         in_memory: ~
-        redis: 'client_service_id'
-        psr_cache: 'pool_service_id'
-        predis: 'predis_service_id'
-        my_storage: 'storage_service'
+        cache: 'pool_service_id'
+        my_storage: '@storage_service'
 ```

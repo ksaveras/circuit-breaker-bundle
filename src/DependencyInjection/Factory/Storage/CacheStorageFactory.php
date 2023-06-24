@@ -9,25 +9,23 @@
  */
 namespace Ksaveras\CircuitBreakerBundle\DependencyInjection\Factory\Storage;
 
-use Symfony\Component\DependencyInjection\ChildDefinition;
+use Ksaveras\CircuitBreaker\Storage\CacheStorage;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-final class RedisStorageFactory extends AbstractStorageFactory
+final class CacheStorageFactory extends AbstractStorageFactory
 {
     public function create(ContainerBuilder $container, string $name, array $config = []): string
     {
         $id = $this->serviceId($name);
-        $definition = new ChildDefinition('ksaveras_circuit_breaker.storage.redis.abstract');
-        $definition->replaceArgument(0, new Reference($config['client']));
-
-        $container->setDefinition($id, $definition);
+        $definition = $container->register($id, CacheStorage::class);
+        $definition->setArguments([new Reference($config['pool'])]);
 
         return $id;
     }
 
     public function getType(): string
     {
-        return 'redis';
+        return 'cache';
     }
 }
