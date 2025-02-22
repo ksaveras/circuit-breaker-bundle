@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
@@ -53,7 +53,7 @@ jobs:
         if: ${{ matrix.stability == 'stable' }}
 
       - name: Install dependencies with Composer (${{ matrix.dependencies }})
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
           composer-options: --prefer-dist --no-progress --optimize-autoloader
