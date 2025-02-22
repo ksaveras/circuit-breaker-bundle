@@ -1,0 +1,81 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:addDefaultsIfNotSet\\(\\)\\.$#"
+			count: 3
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:arrayPrototype\\(\\)\\.$#"
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:useAttributeAsKey\\(\\)\\.$#"
+			count: 1
+			path: src/DependencyInjection/Configuration.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\Factory\\\\Storage\\\\CacheStorageFactory\\:\\:create\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/Factory/Storage/CacheStorageFactory.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\Factory\\\\Storage\\\\InMemoryStorageFactory\\:\\:create\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/Factory/Storage/InMemoryStorageFactory.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\Factory\\\\Storage\\\\ServiceStorageFactory\\:\\:create\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/Factory/Storage/ServiceStorageFactory.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\Factory\\\\Storage\\\\StorageFactoryInterface\\:\\:create\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/Factory/Storage/StorageFactoryInterface.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\KsaverasCircuitBreakerExtension\\:\\:createCircuitBreakers\\(\\) has parameter \\$circuitBreakers with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/KsaverasCircuitBreakerExtension.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\KsaverasCircuitBreakerExtension\\:\\:createHeaderPolicyDefinition\\(\\) has parameter \\$policyOptions with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/KsaverasCircuitBreakerExtension.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\KsaverasCircuitBreakerExtension\\:\\:createRetryPolicyDefinition\\(\\) has parameter \\$policyOptions with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/KsaverasCircuitBreakerExtension.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\KsaverasCircuitBreakerExtension\\:\\:createStorages\\(\\) has parameter \\$storages with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/KsaverasCircuitBreakerExtension.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\DependencyInjection\\\\KsaverasCircuitBreakerExtension\\:\\:loadInternal\\(\\) has parameter \\$mergedConfig with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/DependencyInjection/KsaverasCircuitBreakerExtension.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\Tests\\\\DependencyInjection\\\\ConfigurationTest\\:\\:configsDataProvider\\(\\) return type has no value type specified in iterable type iterable\\.$#"
+			count: 1
+			path: tests/DependencyInjection/ConfigurationTest.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\Tests\\\\DependencyInjection\\\\ConfigurationTest\\:\\:getDefaultPolicyConfiguration\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/DependencyInjection/ConfigurationTest.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\Tests\\\\DependencyInjection\\\\ConfigurationTest\\:\\:testConfiguration\\(\\) has parameter \\$configs with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/DependencyInjection/ConfigurationTest.php
+
+		-
+			message: "#^Method Ksaveras\\\\CircuitBreakerBundle\\\\Tests\\\\DependencyInjection\\\\ConfigurationTest\\:\\:testConfiguration\\(\\) has parameter \\$expected with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/DependencyInjection/ConfigurationTest.php

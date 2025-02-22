@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Ksaveras\CircuitBreakerBundle\Tests\DependencyInjection;
 
 use Ksaveras\CircuitBreakerBundle\DependencyInjection\Configuration;

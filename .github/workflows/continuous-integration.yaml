@@ -18,25 +18,24 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - 8.1
-          - 8.2
+          - 8.3
         dependencies:
           - highest
         stability:
           - stable
         symfony:
-          - 5.4.*
-          - 6.3.*
+          - 6.4.*
+          - 7.2.*
         include:
           # Tests the lowest set of dependencies
           - dependencies: lowest
             stability: stable
-            php-version: 8.1
+            php-version: 8.3
             symfony: 6.3.*
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
@@ -53,7 +52,7 @@ jobs:
         if: ${{ matrix.stability == 'stable' }}
 
       - name: Install dependencies with Composer (${{ matrix.dependencies }})
-        uses: ramsey/composer-install@v2
+        uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
           composer-options: --prefer-dist --no-progress --optimize-autoloader

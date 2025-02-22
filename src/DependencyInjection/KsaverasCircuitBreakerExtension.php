@@ -7,6 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Ksaveras\CircuitBreakerBundle\DependencyInjection;
 
 use Ksaveras\CircuitBreaker\CircuitBreaker;
@@ -46,7 +47,7 @@ final class KsaverasCircuitBreakerExtension extends ConfigurableExtension
     {
         foreach ($storages as $name => $storageConfig) {
             if (!isset($this->storageFactories[$storageConfig['type']])) {
-                throw new \RuntimeException(sprintf('Storage factory of type "%s" is not registered', $storageConfig['type']));
+                throw new \RuntimeException(\sprintf('Storage factory of type "%s" is not registered', $storageConfig['type']));
             }
             $this->storageFactories[$storageConfig['type']]->create($container, $name, $storageConfig);
         }
@@ -58,15 +59,15 @@ final class KsaverasCircuitBreakerExtension extends ConfigurableExtension
             $policyDefinition = $this->createRetryPolicyDefinition($serviceConfig['retry_policy']);
 
             $factory = $container
-                ->register(sprintf('ksaveras_circuit_breaker.factory.%s', $name), CircuitBreakerFactory::class)
+                ->register(\sprintf('ksaveras_circuit_breaker.factory.%s', $name), CircuitBreakerFactory::class)
                 ->setArguments([
                     $serviceConfig['failure_threshold'],
-                    new Reference(sprintf('ksaveras_circuit_breaker.storage.%s', $serviceConfig['storage'])),
+                    new Reference(\sprintf('ksaveras_circuit_breaker.storage.%s', $serviceConfig['storage'])),
                     $policyDefinition,
                     $this->createHeaderPolicyDefinition($serviceConfig['header_policy']),
                 ]);
 
-            $id = sprintf('ksaveras_circuit_breaker.circuit.%s', $name);
+            $id = \sprintf('ksaveras_circuit_breaker.circuit.%s', $name);
             $container->register($id, CircuitBreaker::class)
                 ->setFactory([$factory, 'create'])
                 ->setArguments([$name])

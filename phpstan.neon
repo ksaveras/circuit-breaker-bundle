@@ -1,24 +1,11 @@
 parameters:
     level: max
-    checkMissingIterableValueType: false
     paths:
         - src
         - tests
-    ignoreErrors:
-        -
-            message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:arrayPrototype\\(\\)\\.$#"
-            count: 1
-            path: src/DependencyInjection/Configuration.php
-        -
-            message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:addDefaultsIfNotSet\\(\\)\\.$#"
-            count: 3
-            path: src/DependencyInjection/Configuration.php
-        -
-            message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:useAttributeAsKey\\(\\)\\.$#"
-            count: 1
-            path: src/DependencyInjection/Configuration.php
 
 includes:
+    - phpstan-baseline.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
