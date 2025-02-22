@@ -18,20 +18,19 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - 8.1
-          - 8.2
+          - 8.3
         dependencies:
           - highest
         stability:
           - stable
         symfony:
-          - 5.4.*
-          - 6.3.*
+          - 6.4.*
+          - 7.2.*
         include:
           # Tests the lowest set of dependencies
           - dependencies: lowest
             stability: stable
-            php-version: 8.1
+            php-version: 8.3
             symfony: 6.3.*
 
     steps:
