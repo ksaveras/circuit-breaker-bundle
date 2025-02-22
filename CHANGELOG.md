@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://www.github.com/ksaveras/circuit-breaker-bundle/compare/v1.0.0...v2.0.0) (2025-02-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* bump PHP minimum version, update GitHub actions to latest version (#15)
+
+### Features
+
+* bump PHP minimum version, update GitHub actions to latest version ([#15](https://www.github.com/ksaveras/circuit-breaker-bundle/issues/15)) ([54800de](https://www.github.com/ksaveras/circuit-breaker-bundle/commit/54800def19f0a3ae3966d16355fde45abfbfa729))
+
 ## [1.0.0](https://www.github.com/ksaveras/circuit-breaker-bundle/compare/v0.2.0...v1.0.0) (2023-06-24)
 
 
